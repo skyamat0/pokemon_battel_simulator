@@ -1,0 +1,65 @@
+Garchomp @ Rocky Helmet
+Ability: Rough Skin
+Level: 50
+Tera Type: Steel
+EVs: 4 HP / 252 Atk / 252 Spe
+Jolly Nature
+- Earthquake
+- Dragon Claw
+- Stealth Rock
+- Fire Fang
+
+Rotom-Wash @ Leftovers
+Ability: Levitate
+Level: 50
+Tera Type: Fairy
+EVs: 252 HP / 252 Def / 4 SpA
+Bold Nature
+- Hydro Pump
+- Volt Switch
+- Will-O-Wisp
+- Protect
+
+Corviknight @ Leftovers
+Ability: Mirror Armor
+Level: 50
+Tera Type: Water
+EVs: 252 HP / 4 Atk / 252 Def
+Impish Nature
+- Brave Bird
+- Body Press
+- Iron Defense
+- Roost
+
+Annihilape @ Leftovers
+Ability: Vital Spirit
+Level: 50
+Tera Type: Water
+EVs: 252 HP / 4 Atk / 252 SpD
+Careful Nature
+- Rage Fist
+- Drain Punch
+- Bulk Up
+- Taunt
+
+Azumarill @ Sitrus Berry
+Ability: Huge Power
+Level: 50
+Tera Type: Water
+EVs: 252 HP / 252 Atk / 4 Def
+Adamant Nature
+- Aqua Jet
+- Play Rough
+- Liquidation
+- Belly Drum
+
+Ting-Lu @ Leftovers
+Ability: Vessel of Ruin
+Level: 50
+Tera Type: Poison
+EVs: 252 HP / 4 Atk / 252 SpD
+Careful Nature
+- Earthquake
+- Ruination
+- Stealth Rock
+- Whirlwind
