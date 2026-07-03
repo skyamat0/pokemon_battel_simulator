@@ -1,0 +1,59 @@
+Blaziken @ Blazikenite
+Ability: Speed Boost
+Level: 50
+EVs: 2 HP / 32 Atk / 32 Spe
+Adamant Nature
+- Flare Blitz
+- High Jump Kick
+- Detect
+- Swords Dance
+
+Garchomp @ Sitrus Berry
+Ability: Rough Skin
+Level: 50
+EVs: 32 HP / 32 Def / 2 SpD
+Impish Nature
+- Earthquake
+- Dragon Tail
+- Stealth Rock
+- Spikes
+
+Corviknight @ Leftovers
+Ability: Pressure
+Level: 50
+EVs: 32 HP / 32 Def / 2 SpD
+Impish Nature
+- Brave Bird
+- Bulk Up
+- Substitute
+- Roost
+
+Ninetales-Alola @ Light Clay
+Ability: Snow Warning
+Level: 50
+EVs: 32 HP / 2 Def / 32 Spe
+Timid Nature
+- Freeze-Dry
+- Aurora Veil
+- Misty Terrain
+- Pain Split
+
+Glimmora @ Focus Sash
+Ability: Toxic Debris
+Level: 50
+EVs: 2 HP / 32 SpA / 32 Spe
+Timid Nature
+- Power Gem
+- Energy Ball
+- Mud Shot
+- Stealth Rock
+
+Samurott-Hisui @ Black Glasses
+Ability: Sharpness
+Level: 50
+EVs: 2 HP / 32 Atk / 32 Spe
+Jolly Nature
+- Ceaseless Edge
+- Razor Shell
+- Sucker Punch
+- Swords Dance
