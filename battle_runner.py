@@ -49,24 +49,58 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
+# 行動ログとして JSONL に残すイベント種別
+KEEP_EVENTS = {
+    "turn", "move", "switch", "drag", "faint", "cant", "win", "tie",
+    "-boost", "-unboost", "-status", "-weather", "-mega",
+    "-fieldstart", "-sidestart", "-sideend", "-heal", "-damage",
+    "-crit", "-supereffective", "-resisted", "-immune", "-miss",
+}
+
+
 def battle_record(tag, battle) -> dict:
     # battle.team はロスター6匹を含むため、実際に場に出た個体(revealed)だけを選出とみなす。
     # 種名は base_species で正規化(ばけのかわ剥がれ・メガ進化後のフォルム名を吸収)。
     # opponent 側は「観測できた」ポケモンのみなので、選出3匹すべてが見えた場合のみ正確。
     a_sent = [m for m in battle.team.values() if m.revealed]
     b_seen = list(battle.opponent_team.values())
+
+    # 生プロトコルログから先発・メガ使用・行動ログを抽出する。
+    # player_role で p1/p2 を A/B に対応付ける
+    a_role = battle.player_role or "p1"
+    leads, megas, turn_log = {}, set(), []
+    before_turn1 = True
+    for ev in battle._replay_data:
+        if len(ev) < 2:
+            continue
+        kind = ev[1]
+        if kind == "turn":
+            before_turn1 = False
+        if before_turn1 and kind == "switch":
+            role = ev[2][:2]
+            leads.setdefault(role, ev[3].split(",")[0])
+        if kind == "-mega":
+            megas.add(ev[2][:2])
+        if kind in KEEP_EVENTS:
+            turn_log.append("|".join(ev[1:]))
+
+    b_role = "p2" if a_role == "p1" else "p1"
     return {
         "battle_tag": tag,
         "winner": "A" if battle.won else ("B" if battle.won is False else "tie"),
         "turns": battle.turn,
+        "a_lead": leads.get(a_role),
+        "b_lead": leads.get(b_role),
         "a_selection": sorted(m.base_species for m in a_sent),
         "a_fainted": sorted(m.base_species for m in a_sent if m.fainted),
         "a_remaining": sum(not m.fainted for m in a_sent),
-        "a_mega_used": any(m.species.endswith("mega") for m in a_sent),
+        "a_mega_used": a_role in megas,
         "b_selection_seen": sorted(m.base_species for m in b_seen),
         "b_fainted_seen": sorted(m.base_species for m in b_seen if m.fainted),
         "b_remaining_seen": sum(not m.fainted for m in b_seen),
-        "b_mega_seen": any(m.species.endswith("mega") for m in b_seen),
+        "b_mega_used": b_role in megas,
+        "a_role": a_role,
+        "turn_log": turn_log,
     }
 
 

@@ -44,6 +44,31 @@ def main():
     for wr, w, t, k in shown:
         print(f"  {wr:6.1%} ({w}/{t})  {k}")
 
+    # 先発別勝率(選出は実質 6C1×5C2: 先発の対面が試合を作るという観点)
+    if records and records[0].get("a_lead"):
+        for side, label in (("a_lead", "A側: 自分の先発別勝率"), ("b_lead", "相手の先発別: A側勝率")):
+            lead = defaultdict(lambda: [0, 0])
+            for r in records:
+                lead[r[side]][1] += 1
+                lead[r[side]][0] += r["winner"] == "A"
+            print(f"\n■ {label}")
+            for k, (w, t) in sorted(lead.items(), key=lambda x: -x[1][0] / x[1][1]):
+                print(f"  {k:<16} {w / t:>7.1%} ({w}/{t})")
+
+        # 先発対面マトリクス
+        matchup = defaultdict(lambda: [0, 0])
+        for r in records:
+            matchup[(r["a_lead"], r["b_lead"])][1] += 1
+            matchup[(r["a_lead"], r["b_lead"])][0] += r["winner"] == "A"
+        print("\n■ 先発対面別 A側勝率(有利上位・不利上位)")
+        cells = sorted(
+            ((w / t, w, t, a, b) for (a, b), (w, t) in matchup.items() if t >= args.min_n),
+            reverse=True,
+        )
+        shown_cells = cells[:8] + (cells[-8:] if len(cells) > 16 else cells[8:])
+        for wr, w, t, a, b in shown_cells:
+            print(f"  {wr:6.1%} ({w:>3}/{t:<3})  自分:{a:<14} vs 相手:{b}")
+
     # 自分の各ポケモン: 選出率・選出時勝率・被倒率
     mon = defaultdict(lambda: [0, 0, 0])  # {種: [選出数, 勝ち, 倒された]}
     for r in records:
