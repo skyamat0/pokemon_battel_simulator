@@ -35,14 +35,16 @@ def build_parser() -> argparse.ArgumentParser:
 
 def battle_record(tag, battle) -> dict:
     # opponent_team は「観測できた」相手ポケモンのみなので、
-    # b_remaining は選出3匹すべてが見えた場合のみ正確
+    # b_* は選出3匹すべてが見えた場合のみ正確
     return {
         "battle_tag": tag,
         "winner": "A" if battle.won else ("B" if battle.won is False else "tie"),
         "turns": battle.turn,
         "a_selection": [m.species for m in battle.team.values()],
+        "a_fainted": [m.species for m in battle.team.values() if m.fainted],
         "a_remaining": sum(not m.fainted for m in battle.team.values()),
         "b_selection_seen": [m.species for m in battle.opponent_team.values()],
+        "b_fainted_seen": [m.species for m in battle.opponent_team.values() if m.fainted],
         "b_remaining_seen": sum(not m.fainted for m in battle.opponent_team.values()),
     }
 
