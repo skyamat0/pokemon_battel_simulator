@@ -9,10 +9,18 @@ import argparse
 import asyncio
 import datetime
 import os
+import shutil
+import sysconfig
 
-# サーバーに C コンパイラが無く torch.compile が例外を吐いて対戦がハングするため、
-# torch を import する前に eager 実行へ固定する
-os.environ.setdefault("TORCHDYNAMO_DISABLE", "1")
+# torch.compile はホストに C++ コンパイラと Python ヘッダ(Python.h)を要求し、
+# 欠けていると例外→対戦が無言でハングする。揃っていない環境では
+# torch を import する前に eager 実行へ自動フォールバックする。
+_has_compiler = shutil.which("g++") is not None or shutil.which("clang++") is not None
+_has_python_h = os.path.exists(
+    os.path.join(sysconfig.get_paths()["include"], "Python.h")
+)
+if not (_has_compiler and _has_python_h):
+    os.environ.setdefault("TORCHDYNAMO_DISABLE", "1")
 
 from poke_env import AccountConfiguration
 from poke_env.environment.move import Move
