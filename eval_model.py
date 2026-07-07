@@ -8,6 +8,11 @@
 import argparse
 import asyncio
 import datetime
+import os
+
+# サーバーに C コンパイラが無く torch.compile が例外を吐いて対戦がハングするため、
+# torch を import する前に eager 実行へ固定する
+os.environ.setdefault("TORCHDYNAMO_DISABLE", "1")
 
 from poke_env import AccountConfiguration
 from poke_env.environment.move import Move
