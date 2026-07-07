@@ -56,6 +56,7 @@ async def run(args):
         account_configuration=AccountConfiguration(f"ilA-{run_id}", None),
         battle_format=args.format, team=team_a,
         model_path=args.model, tokenizer_name=args.tokenizer, device=args.device,
+        greedy=args.greedy,
         max_concurrent_battles=args.concurrency,
     )
     bot = ChampionsHeuristicsPlayer(
@@ -82,5 +83,6 @@ if __name__ == "__main__":
     p.add_argument("--format", default="gen9championsbssregmb")
     p.add_argument("--tokenizer", default="championsv1")
     p.add_argument("--device", default="cpu")
+    p.add_argument("--greedy", action="store_true", help="argmaxで手を選ぶ(既定はサンプリング)")
     p.add_argument("--concurrency", type=int, default=5)
     asyncio.run(run(p.parse_args()))

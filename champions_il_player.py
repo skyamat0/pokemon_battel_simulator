@@ -52,7 +52,7 @@ def champions_order(battle, action_idx):
 
 class ChampionsILPlayer(Player):
     def __init__(self, *args, model_path, tokenizer_name="championsv1",
-                 device="cpu", mask_actions=True, **kwargs):
+                 device="cpu", mask_actions=True, greedy=False, **kwargs):
         super().__init__(*args, **kwargs)
         self.device = torch.device(device)
         self.model = torch.load(model_path, map_location=self.device, weights_only=False)
@@ -64,6 +64,7 @@ class ChampionsILPlayer(Player):
         )
         self.action_space = DefaultActionSpace()
         self.mask_actions = mask_actions
+        self.greedy = greedy  # True: argmax(最有力手) / False: 分布からサンプリング
         self.hidden_states = {}
 
     def _illegal_mask(self, battle):
@@ -86,7 +87,10 @@ class ChampionsILPlayer(Player):
             if self.mask_actions:
                 mask = self._illegal_mask(battle).view(1, 1, -1)
                 logits = logits.masked_fill(mask, -float("inf"))
-            action_idx = Categorical(logits=logits).sample().item()
+            if self.greedy:
+                action_idx = logits.argmax(dim=-1).item()
+            else:
+                action_idx = Categorical(logits=logits).sample().item()
         self.hidden_states[battle.battle_tag] = new_hidden
 
         order = champions_order(battle, action_idx)

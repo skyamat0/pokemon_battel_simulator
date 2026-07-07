@@ -126,11 +126,11 @@ torch.compile はホストに `g++` と `python3.12-dev`(Python.h)が必要
 フォールバックする。学習コマンドの `TORCHDYNAMO_DISABLE=1` は toolchain が
 揃っていれば外してよい(compile 有効で1.5〜2倍高速)。
 
-### 学習(模倣学習)
+### 学習(模倣学習)— モデルを作るコマンド
 
 ```bash
 cd ~/sakurai/metamon
-METAMON_CACHE_DIR=~/sakurai/metamon_cache WANDB_MODE=disabled TORCHDYNAMO_DISABLE=1 \
+METAMON_CACHE_DIR=~/sakurai/metamon_cache WANDB_MODE=disabled \
 nohup ~/sakurai/metamon_env/bin/python -m metamon.il.train \
   --run_name <実験名> --gpu 0 \
   --formats gen9championsbssregmb gen9championsbssregma \
@@ -138,12 +138,25 @@ nohup ~/sakurai/metamon_env/bin/python -m metamon.il.train \
   --tokenizer championsv1 --base_obs_space TeamPreviewObservationSpace \
   --model_config metamon/il/configs/transformer_embedding.gin \
   --epochs 500 --batch_size 64 --val_min_date 2026-07-04 > ~/sakurai/train.log 2>&1 &
+
+# 進捗確認
+grep "Validation Accuracy" ~/sakurai/train.log | tail -5
 ```
 
+- **成果物(モデル本体)**: `~/sakurai/metamon/logs_and_checkpoints/<実験名>_trial1/ckpts/<実験名>_trial1_BEST.pt`
+  (検証精度ベスト時点のモデル。`.ptstate` は再開用の学習状態で対戦には不要)
 - `--val_min_date`: 時間分割(この日以降が検証、前日までが訓練)。リプレイが増えたら進める
 - 早期停止つき(検証精度が2エポック改善しなければ終了)。1エポック約3分(RTX 8000)
-- ベストモデル: `logs_and_checkpoints/<実験名>_trial1/ckpts/<実験名>_trial1_BEST.pt`
+- モデルサイズは `--model_config` の gin で変更(`tiny_dryrun.gin`=疎通用 82k / `transformer_embedding.gin`=標準 1.4M)
 - 新しいリプレイを取り込むには: パース(下記)→ 語彙再構築 → 学習、の順
+
+### 学習済みモデル一覧
+
+| モデル | 手法 | 検証精度 | 対bot戦績 | 場所(サーバー) |
+|---|---|---|---|---|
+| **champions_il_v1**(2026-07-07) | 模倣学習のみ(1.4M) | 38.1% (Top-2 59.5%) | 21%(my_party vs top_rain・サンプリング手選択) | `~/sakurai/metamon/logs_and_checkpoints/champions_il_v1_trial1/ckpts/champions_il_v1_trial1_BEST.pt` |
+
+強化学習(オフラインRL)は未着手 — v2 の中心タスク。
 
 ```bash
 # リプレイ再パース(データ更新時)と語彙再構築
